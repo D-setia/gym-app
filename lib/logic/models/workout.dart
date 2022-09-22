@@ -75,3 +75,12 @@ class Exercise {
             (times == null) ? [] : List<dynamic>.from(times!.map((x) => x)),
       };
 }
+
+// [{ "exercises" : [{
+//   "name": "Chest and biceps",
+//   "sets": 1,
+//   "notes" : ["note1", "note2"],
+//   "reps" : [1,2,3],
+//   "weights" : [1,2,3],
+//   "times" : ["50", "60"]
+// }]}]

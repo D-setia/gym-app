@@ -10,3 +10,4 @@ const String CARDIO = "C/D";
 const String ABS = "A/B";
 const String RT = "R/T";
 const String MISC = "MISC";
+const String CALISTHENICS = "CALS";

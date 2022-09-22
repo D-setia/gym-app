@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app/logic/models/day.dart';
-import 'package:gym_app/presentation/workout_details_page.dart';
+import 'package:gym_app/presentation/workout_page/workout_details_page.dart';
 
 class DayTile extends StatelessWidget {
   final Day day;
@@ -10,10 +10,11 @@ class DayTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onDayTileTap(context),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => onDayTileTap(context),
         child: PhysicalModel(
           color: Colors.white,
           elevation: 5,
@@ -49,8 +50,11 @@ class DayTile extends StatelessWidget {
   void onDayTileTap(BuildContext context) {
     if (isEditModeActive) {
     } else {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => WorkoutDetailsPage(workoutTitle: day.workoutType)));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => WorkoutDetailsPage(
+                workoutTitle: day.workoutType,
+                dayNo: day.dayNo,
+              )));
     }
   }
 }
