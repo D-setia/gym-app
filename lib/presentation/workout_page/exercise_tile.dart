@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app/constants/strings.dart';
 import 'package:gym_app/logic/models/workout.dart';
+import 'dart:math' as math;
+
+import 'package:gym_app/presentation/workout_page/edit_exercise_dialog.dart';
 
 class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
@@ -17,7 +20,8 @@ class ExerciseTile extends StatelessWidget {
         elevation: 5,
         borderRadius: BorderRadius.circular(15),
         child: GestureDetector(
-          onDoubleTap: editExercise,
+          onTap: handleOnExerciseTap,
+          onDoubleTap: () => editExercise(context),
           child: ListTile(
             leading: Icon(
               getIcon(),
@@ -27,10 +31,12 @@ class ExerciseTile extends StatelessWidget {
               exercise.name,
               style: const TextStyle(fontSize: 20),
             ),
-            subtitle: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: getSubtitle()),
+            subtitle: (getSubtitle() == null)
+                ? null
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: getSubtitle()!),
             trailing: isEditModeActive
                 ? const Icon(
                     Icons.drag_handle,
@@ -81,40 +87,92 @@ class ExerciseTile extends StatelessWidget {
     }
   }
 
-  void editExercise() {
+  void editExercise(BuildContext context) async {
+    if (isEditModeActive)
+      int resp = await showEditExerciseDialog(context) ?? 400;
     //TODO: implement
   }
 
-  List<Widget> getSubtitle() {
+  List<Widget>? getSubtitle() {
     List<Widget> subtitle = [];
     if (exercise.sets == 0) return subtitle;
-    if (exercise.reps != null) {
-      String top = "Reps: ";
-      String bottom = "";
 
-      if (exercise.times != null) {
-        bottom = "Duration: ";
-        top += "    ";
+    String reps = REPS;
+    String dur = DURATION;
+    String weights = WEIGHTS;
 
-        for (int i = 0; i < exercise.sets; i++) {
-          
-        }
-      } else if (exercise.weights != null) {
-        bottom = "Weights: ";
-        top += "   ";
+    if (exercise.duration != null) {
+      for (int i = 0; i < exercise.duration!.length; i++) {
+        if (i != 0) dur += ", ";
+        reps += exercise.duration![i];
+      }
 
-        for (int i = 0; i < exercise.sets; i++) {
-          if (i != 0) top += ", ";
-          top += exercise.reps![i].toString();
+      if (exercise.reps != null) {
+        for (int i = 0; i < exercise.reps!.length; i++) {
+          String rep = exercise.reps![i].toString();
+          while (rep.length < exercise.duration![i].length) {
+            rep = " $rep";
+          }
+          if (i != 0) rep = ", $rep";
+          reps += rep;
         }
-      } else {
-        for (int i = 0; i < exercise.sets; i++) {
-          if (i != 0) top += ", ";
-          top += exercise.reps![i].toString();
+        subtitle.add(Text(reps));
+      }
+      if (exercise.weights != null) {
+        for (int i = 0; i < exercise.weights!.length; i++) {
+          String wt = exercise.weights![i].toString();
+          while (wt.length < exercise.duration![i].length) {
+            wt = " $wt";
+          }
+          if (i != 0) wt = ", $wt";
+          weights += wt;
         }
+        subtitle.add(Text(weights));
+      }
+      subtitle.add(Text(dur));
+    } else {
+      if (exercise.reps != null) {
+        for (int i = 0; i < exercise.reps!.length; i++) {
+          if (i != 0) reps += ", ";
+          if (exercise.reps![i] < 10) reps += " ";
+          reps += exercise.reps![i].toString();
+        }
+        subtitle.add(Text(reps));
+      }
+
+      if (exercise.weights != null) {
+        for (int i = 0; i < exercise.weights!.length; i++) {
+          if (i != 0) weights += ", ";
+          if (exercise.weights![i] < 10) weights += " ";
+          weights += exercise.weights![i].toString();
+        }
+        subtitle.add(Text(weights));
       }
     }
-
     return subtitle;
+  }
+
+  int getMaxLen(int? len1, int? len2) {
+    if (len1 == null && len2 == null) {
+      return 0;
+    } else if (len1 != null && len2 == null) {
+      return len1;
+    } else if (len1 == null && len2 != null) {
+      return len2;
+    } else {
+      return math.max(len1!, len2!);
+    }
+  }
+
+  void handleOnExerciseTap() {}
+
+  Future<int?> showEditExerciseDialog(BuildContext context) async {
+    return showDialog<int>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return editExerciseDialog(context, exercise);
+      },
+    );
   }
 }
