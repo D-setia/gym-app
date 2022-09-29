@@ -12,6 +12,8 @@ const String RT = "R/T";
 const String MISC = "MISC";
 const String CALISTHENICS = "CALS";
 
-const String REPS =     "Reps:     ";
-const String WEIGHTS =  "Weights:  ";
+const List<String> TYPES = [MACHINE, DUMBBELL, CABLE, CARDIO, ABS, RT, MISC, CALISTHENICS];
+
+const String REPS = "Reps:     ";
+const String WEIGHTS = "Weights:  ";
 const String DURATION = "Duration: ";

@@ -47,9 +47,12 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
               itemCount: _exercises.length,
               itemBuilder: (context, index) {
                 return ExerciseTile(
-                  key: Key('$index'),
+                  key: Key("$index"),
                   exercise: _exercises[index],
+                  index: index,
                   isEditModeActive: isEditModeActive,
+                  deleteExercise: deleteExercise,
+                  modifyExercise: modifyExercise,
                 );
               },
               onReorder: (int oldIndex, int newIndex) {
@@ -79,6 +82,18 @@ class _WorkoutDetailsPageState extends State<WorkoutDetailsPage> {
 
     setState(() {
       _exercises = _workouts[widget.dayNo - 1].exercises;
+    });
+  }
+
+  deleteExercise(int index) {
+    setState(() {
+      _exercises.removeAt(index);
+    });
+  }
+
+  modifyExercise(int index, Exercise exercise) {
+    setState(() {
+      _exercises[index] = exercise;
     });
   }
 }

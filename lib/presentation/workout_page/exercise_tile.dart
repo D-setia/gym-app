@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app/constants/strings.dart';
+import 'package:gym_app/logic/helpers.dart';
 import 'package:gym_app/logic/models/workout.dart';
 import 'dart:math' as math;
 
@@ -7,9 +8,17 @@ import 'package:gym_app/presentation/workout_page/edit_exercise_dialog.dart';
 
 class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
+  final int? index;
   final bool isEditModeActive;
+  final Function(int, Exercise)? modifyExercise;
+  final Function(int)? deleteExercise;
   const ExerciseTile(
-      {required this.exercise, required this.isEditModeActive, super.key});
+      {required this.exercise,
+      required this.isEditModeActive,
+      this.index,
+      this.deleteExercise,
+      this.modifyExercise,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +33,7 @@ class ExerciseTile extends StatelessWidget {
           onDoubleTap: () => editExercise(context),
           child: ListTile(
             leading: Icon(
-              getIcon(),
+              getIcon(exercise.type),
               size: 40,
             ),
             title: Text(
@@ -47,13 +56,13 @@ class ExerciseTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        exercise.duration == null
+                        exercise.type != CARDIO
                             ? exercise.sets.toString()
-                            : exercise.duration!,
+                            : exercise.durations![0],
                         style: const TextStyle(fontSize: 30),
                       ),
                       Text(
-                        exercise.duration == null ? "sets" : "mins",
+                        exercise.type != CARDIO ? "sets" : "min:sec",
                         style: const TextStyle(fontSize: 15),
                       ),
                     ],
@@ -62,29 +71,6 @@ class ExerciseTile extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  IconData? getIcon() {
-    switch (exercise.type) {
-      case MACHINE:
-        return Icons.settings;
-      case DUMBBELL:
-        return Icons.fitness_center;
-      case CABLE:
-        return Icons.cable;
-      case CARDIO:
-        return Icons.directions_run_rounded;
-      case ABS:
-        return Icons.airline_seat_flat_angled;
-      case RT:
-        return Icons.cable;
-      case MISC:
-        return Icons.sports_gymnastics;
-      case CALISTHENICS:
-        return Icons.sports_mma;
-      default:
-        return Icons.question_mark;
-    }
   }
 
   void editExercise(BuildContext context) async {
@@ -101,16 +87,16 @@ class ExerciseTile extends StatelessWidget {
     String dur = DURATION;
     String weights = WEIGHTS;
 
-    if (exercise.duration != null) {
-      for (int i = 0; i < exercise.duration!.length; i++) {
+    if (exercise.durations != null) {
+      for (int i = 0; i < exercise.durations!.length; i++) {
         if (i != 0) dur += ", ";
-        reps += exercise.duration![i];
+        reps += exercise.durations![i];
       }
 
       if (exercise.reps != null) {
         for (int i = 0; i < exercise.reps!.length; i++) {
           String rep = exercise.reps![i].toString();
-          while (rep.length < exercise.duration![i].length) {
+          while (rep.length < exercise.durations![i].length) {
             rep = " $rep";
           }
           if (i != 0) rep = ", $rep";
@@ -121,7 +107,7 @@ class ExerciseTile extends StatelessWidget {
       if (exercise.weights != null) {
         for (int i = 0; i < exercise.weights!.length; i++) {
           String wt = exercise.weights![i].toString();
-          while (wt.length < exercise.duration![i].length) {
+          while (wt.length < exercise.durations![i].length) {
             wt = " $wt";
           }
           if (i != 0) wt = ", $wt";
@@ -171,7 +157,12 @@ class ExerciseTile extends StatelessWidget {
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return editExerciseDialog(context, exercise);
+        return editExerciseDialog(
+            context: context,
+            exercise: exercise,
+            deleteExercise: deleteExercise!,
+            index: index!,
+            modifyExercise: modifyExercise!);
       },
     );
   }

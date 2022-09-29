@@ -5,7 +5,7 @@ AppBar myAppBar(
     {required String title,
     required VoidCallback onEditButtonClick,
     required bool isEditModeActive,
-    bool autoImplyLeading = true,
+    bool autoImplyLeading = false,
     Key? key}) {
   return AppBar(
     key: key,
