@@ -38,22 +38,35 @@ class _EditExerciseAlertDialogBodyState
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: ListBody(
+    return SizedBox(
+      width: MediaQuery.of(context).size.width*0.8,
+      height: MediaQuery.of(context).size.width*0.7,
+      child: ListView(
         children: [
           SizedBox(
             height: 100,
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width*0.8,
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
                  DropdownButton(
+                  elevation: 0,
                   value: type,
                   icon: const Icon(Icons.keyboard_arrow_down),   
-                  items: TYPES.map((String items) {
+                  items: TYPES.map((String item) {
                     return DropdownMenuItem(
-                      value: items,
-                      child: Icon(getIcon(type)),
+                      value: item,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(getIcon(item), size: 40,),
+                            Text(item)
+                          ],
+                        ),
+                      ),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
@@ -62,9 +75,13 @@ class _EditExerciseAlertDialogBodyState
                     });
                   },
                 ),
-                TextField(
-                  controller: _nameController,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                SizedBox(
+                  width: 200,
+                  child: TextField(
+                    controller: _nameController,
+                    style: const TextStyle(fontSize: 20),
+                    decoration: const InputDecoration.collapsed(hintText: "Exercise name", border: UnderlineInputBorder(), ),
+                  ),
                 ),
               ],
             ),
