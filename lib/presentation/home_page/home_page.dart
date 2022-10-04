@@ -14,7 +14,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool isEditModeActive = false;
   late List<Widget> daysWidgets;
   late List<Day> days;
 
@@ -31,25 +30,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: myAppBar(
             title: "Workout Tracker",
-            onEditButtonClick: onEditButtonClick,
-            isEditModeActive: isEditModeActive),
+            showEditButton: false),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: daysWidgets,
           ),
-        ),
-        floatingActionButton: isEditModeActive
-            ? FloatingActionButton(onPressed: onNewDayAdded)
-            : Container());
+        ),);
   }
-
-  void onNewDayAdded() {}
-
-  void onEditButtonClick() => setState(() {
-        isEditModeActive = !isEditModeActive;
-      });
 
   void loadDaysData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -64,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (Day day in days) {
       tempDaysWidgets.add(DayTile(
         day: day,
-        isEditModeActive: isEditModeActive,
+        isEditModeActive: false,
       ));
     }
     setState(() {
@@ -74,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    //TODO: saveDaysData();
     super.dispose();
   }
 }

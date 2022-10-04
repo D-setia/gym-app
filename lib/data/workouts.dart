@@ -18,7 +18,7 @@ List<Workout> defaultWorkouts = [
     Exercise(name: "Cobra raise", type: MISC),
   ]), 
   Workout(exercises: [
-    Exercise(name: "Assisted pull ups", type: MACHINE, reps: [15, 15, 15], weights: [43, 49, 49]),
+    Exercise(name: "Assisted pull ups", type: MACHINE, reps: ['15', '15', '15'], weights: ['43', '49', '49']),
     Exercise(name: "Lat pull downs", type: MACHINE),
     Exercise(name: "Seated lat row", type: MACHINE),
     Exercise(name: "Lat row", type: DUMBBELL),

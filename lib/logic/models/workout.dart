@@ -44,8 +44,8 @@ class Exercise {
   String type;
   int sets;
   List<String>? notes;
-  List<int>? reps;
-  List<int>? weights;
+  List<String>? reps;
+  List<String>? weights;
   List<String>? durations;
 
   factory Exercise.fromJson(Map<String, dynamic> json) => Exercise(
@@ -53,8 +53,8 @@ class Exercise {
         type: json["type"],
         sets: json["sets"],
         notes: List<String>.from(json["notes"].map((x) => x)),
-        reps: List<int>.from(json["reps"].map((x) => x)),
-        weights: List<int>.from(json["weights"].map((x) => x)),
+        reps: List<String>.from(json["reps"].map((x) => x)),
+        weights: List<String>.from(json["weights"].map((x) => x)),
         durations: List<String>.from(json["durations"].map((x) => x)),
       );
 

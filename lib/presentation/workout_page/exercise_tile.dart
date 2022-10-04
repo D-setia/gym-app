@@ -5,6 +5,7 @@ import 'package:gym_app/logic/models/workout.dart';
 import 'dart:math' as math;
 
 import 'package:gym_app/presentation/workout_page/edit_exercise_dialog.dart';
+import 'package:gym_app/presentation/workout_page/exercise_helpers.dart';
 
 class ExerciseTile extends StatelessWidget {
   final Exercise exercise;
@@ -25,12 +26,12 @@ class ExerciseTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: PhysicalModel(
-        color: Colors.white,
+        color: Theme.of(context).secondaryHeaderColor,
         elevation: 5,
         borderRadius: BorderRadius.circular(15),
         child: GestureDetector(
-          onTap: handleOnExerciseTap,
-          onDoubleTap: () => editExercise(context),
+          onTap: () => editExercise(context),
+          // onDoubleTap: () => handleOnExerciseTap(),
           child: ListTile(
             leading: Icon(
               getIcon(exercise.type),
@@ -74,8 +75,14 @@ class ExerciseTile extends StatelessWidget {
   }
 
   void editExercise(BuildContext context) async {
-    if (isEditModeActive)
-      int resp = await showEditExerciseDialog(context) ?? 400;
+    if (isEditModeActive) {
+      await showEditExerciseDialog(
+          context: context,
+          index: index!,
+          exercise: exercise,
+          modifyExercise: modifyExercise!,
+          deleteExercise: deleteExercise!);
+    }
     //TODO: implement
   }
 
@@ -87,49 +94,56 @@ class ExerciseTile extends StatelessWidget {
     String dur = DURATION;
     String weights = WEIGHTS;
 
-    if (exercise.durations != null) {
-      for (int i = 0; i < exercise.durations!.length; i++) {
-        if (i != 0) dur += ", ";
-        reps += exercise.durations![i];
-      }
+    if (exercise.durations != null && exercise.durations!.isNotEmpty) {
+      if (exercise.type == CARDIO && exercise.sets == 1) {
+      } else {
+        for (int i = 0; i < exercise.durations!.length; i++) {
+          if (i != 0) dur += ", ";
+          dur += exercise.durations![i];
+        }
 
-      if (exercise.reps != null) {
-        for (int i = 0; i < exercise.reps!.length; i++) {
-          String rep = exercise.reps![i].toString();
-          while (rep.length < exercise.durations![i].length) {
-            rep = " $rep";
+        if (exercise.reps != null && exercise.reps!.isNotEmpty) {
+          for (int i = 0; i < exercise.reps!.length; i++) {
+            String rep = exercise.reps![i].toString();
+            while (rep.length < exercise.durations![i].length) {
+              rep = " $rep";
+            }
+            if (i != 0) rep = ", $rep";
+            reps += rep;
           }
-          if (i != 0) rep = ", $rep";
-          reps += rep;
+          subtitle.add(Text(reps));
         }
-        subtitle.add(Text(reps));
-      }
-      if (exercise.weights != null) {
-        for (int i = 0; i < exercise.weights!.length; i++) {
-          String wt = exercise.weights![i].toString();
-          while (wt.length < exercise.durations![i].length) {
-            wt = " $wt";
+        if (exercise.weights != null && exercise.weights!.isNotEmpty) {
+          for (int i = 0; i < exercise.weights!.length; i++) {
+            String wt = exercise.weights![i].toString();
+            while (wt.length < exercise.durations![i].length) {
+              wt = " $wt";
+            }
+            if (i != 0) wt = ", $wt";
+            weights += wt;
           }
-          if (i != 0) wt = ", $wt";
-          weights += wt;
+          subtitle.add(Text(weights));
         }
-        subtitle.add(Text(weights));
+        subtitle.add(Text(dur));
       }
-      subtitle.add(Text(dur));
     } else {
-      if (exercise.reps != null) {
+      if (exercise.reps != null && exercise.reps!.isNotEmpty) {
         for (int i = 0; i < exercise.reps!.length; i++) {
           if (i != 0) reps += ", ";
-          if (exercise.reps![i] < 10) reps += " ";
+          if (exercise.reps![i].length == 1 && exercise.reps![i] != "0") {
+            reps += "0";
+          }
           reps += exercise.reps![i].toString();
         }
         subtitle.add(Text(reps));
       }
 
-      if (exercise.weights != null) {
+      if (exercise.weights != null && exercise.weights!.isNotEmpty) {
         for (int i = 0; i < exercise.weights!.length; i++) {
           if (i != 0) weights += ", ";
-          if (exercise.weights![i] < 10) weights += " ";
+          if (exercise.weights![i].length == 1 && exercise.weights![i] != "0") {
+            weights += "0";
+          }
           weights += exercise.weights![i].toString();
         }
         subtitle.add(Text(weights));
@@ -148,22 +162,5 @@ class ExerciseTile extends StatelessWidget {
     } else {
       return math.max(len1!, len2!);
     }
-  }
-
-  void handleOnExerciseTap() {}
-
-  Future<int?> showEditExerciseDialog(BuildContext context) async {
-    return showDialog<int>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return editExerciseDialog(
-            context: context,
-            exercise: exercise,
-            deleteExercise: deleteExercise!,
-            index: index!,
-            modifyExercise: modifyExercise!);
-      },
-    );
   }
 }

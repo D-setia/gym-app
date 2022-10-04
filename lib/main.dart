@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/constants/theme.dart';
 import 'package:gym_app/presentation/home_page/home_page.dart';
 
 void main() {
@@ -15,6 +16,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      darkTheme: myDarkTheme,
+      themeMode: ThemeMode.dark,
       home: const MyHomePage(),
     );
   }

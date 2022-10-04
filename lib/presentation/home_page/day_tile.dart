@@ -16,7 +16,7 @@ class DayTile extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: () => onDayTileTap(context),
         child: PhysicalModel(
-          color: Colors.white,
+          color: Theme.of(context).secondaryHeaderColor,
           elevation: 5,
           borderRadius: BorderRadius.circular(20),
           child: Padding(
